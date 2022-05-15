@@ -18,4 +18,4 @@ This folder contains all CSV files and data used and generated in the data colle
 
 Notes: 
 * the term _relevant_ counties implies that all US territories as well as Alaska, Hawaii, and any island counties in the continental US have been filtered out from the data set
-* all COVID data (including county_info and state_info) was collected and filtered from [Johns Hopkins] (https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data)) and then filtered, cleaned, and pre-processed by our team
+* all COVID data (including county_info and state_info) was collected and filtered from [Johns Hopkins](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data)) and then filtered, cleaned, and pre-processed by our team
