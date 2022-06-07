@@ -17,7 +17,7 @@ File Desctiptions
 
 **covid_symptom_test_data.csv**: contains data used for training a predictive model for COVID test result prediction
 
-**lr_predictions.csv**: contains all possible combinations of COVID symptoms and their respective predictions for the COVID prediction ML models
+**all_predictions.csv**: contains all possible combinations of COVID symptoms and their respective predictions for the COVID prediction ML models
 
 Notes
 -----
