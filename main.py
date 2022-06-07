@@ -25,18 +25,22 @@ if __name__ == '__main__':
 
     # merge county information with case counts and save to csv
     cases = pd.merge(county_info, cases, on="fips", how="left")
+
+    # change FIPS of one DS county to match format for mapbox (used later for plotting)
+    cases.loc[cases.fips == '46102', 'fips'] = '46113'
+
     cases.to_csv('active_cases.csv', index=False)
     cases_csv = cases.to_csv(sep=',', index=False)
 
     # files and names to upload to GitHub
     file = cases_csv
-    file_name = 'active_cases.csv'
+    file_name = 'active_cases_test.csv'
 
     # GitHub commit message
     commit_message = 'daily active case update'
 
     # create connection with GiHub and select repo and branch
-    g = Github('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')
+    g = Github('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')
     repo = g.get_user().get_repo('MDA-TeamCroatia')
     master_ref = repo.get_git_ref("heads/main")
     master_sha = master_ref.object.sha

@@ -69,7 +69,7 @@ def get_covid_cases(start_date, end_date=None, type_cases='confirmed', county_fi
         active = scale_by_pop(active, county_info)
 
     # change FIPS of one DS county to match format for mapbox (used later for plotting)
-    active['fips'].replace({'46102': '46113'}, inplace=True)
+    # active.loc[active.fips == '46102', 'fips'] = '46113'
 
     return active
 
