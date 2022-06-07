@@ -19,7 +19,8 @@ File Desctiptions
 
 **lr_predictions.csv**: contains all possible combinations of COVID symptoms and their respective predictions for the COVID prediction ML models
 
-Notes: 
+Notes
+-----
 * the term _relevant_ counties implies that all US territories as well as Alaska, Hawaii, and any island counties in the continental US have been filtered out from the data set
 * most COVID data (including county_info and state_info) was collected and filtered from [Johns Hopkins](https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data) and then filtered, cleaned, and pre-processed by our team
 * COVID data for most Utah counties was collected and filtered from [NY Times](https://github.com/nytimes/covid-19-data) and then filtered, cleaned, and pre-processed by our team
