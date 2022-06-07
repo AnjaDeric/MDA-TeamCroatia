@@ -3,7 +3,7 @@ Modern Data Analytics Final Project
 
 This repository contains all python scripts, notebooks, and data files used to create the Team Croatia final project for Modern Data Analytics.
 
-File Desctiptions
+File Descriptions
 -----------------
 **Data_Preparation_and_Pre_Processing.ipynb**: Google Colab notebook used for most of our data preparation, cleaning, and pre-processing. This includes gathering and cleaning of county-related information, COVID case data (initial testing), county adjacency/border information, and county distance information.
 
