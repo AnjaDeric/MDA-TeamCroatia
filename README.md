@@ -13,6 +13,6 @@ File Desctiptions
 
 **active_cases.csv**: CSV file containing active COVID case counts for all counties. This file is updated every time main.py runs, including all dates from 1/1/2021 up until the day before the moment when the script is run. 
 
-Data Forlder
+Data Folder
 -----------------
 The Data folder in this repository contains all the csv files used as intermediate stopping points. The file descriptions can be found inside the folder itself.
