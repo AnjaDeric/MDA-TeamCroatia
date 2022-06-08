@@ -252,6 +252,7 @@ def apply_clustering(option_4):
 
     covidmap2 = px.choropleth_mapbox(df_clusters, geojson=counties, locations='fips', color=cluster_count, hover_name='county',
                                  hover_data=['fips', 'state', 'population'],
+                                 color_discrete_sequence=px.colors.qualitative.Dark24,
                                  mapbox_style="carto-positron", zoom=2.25, center={"lat": 37.0902, "lon": -95.7129},
                                  opacity=0.9, labels={cluster_count: 'cluster'})
 
