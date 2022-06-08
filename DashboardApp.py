@@ -5,9 +5,6 @@ import plotly.graph_objects as go
 import datetime as dt
 from dash import Dash, dcc, html, Input, Output
 from datetime import date
-from sklearn.preprocessing import RobustScaler
-from sklearn.cluster import KMeans
-from sklearn.decomposition import PCA
 from urllib.request import urlopen
 import json
 with urlopen('https://raw.githubusercontent.com/plotly/datasets/master/geojson-counties-fips.json') as response:
@@ -25,34 +22,6 @@ df_counties = pd.read_csv(url)
 
 url2 = "https://raw.githubusercontent.com/AnjaDeric/MDA-TeamCroatia/main/active_cases.csv"
 df_active = pd.read_csv(url2, dtype={"fips": str})
-df_active_b = pd.read_csv(url2, dtype={"fips": str})
-df_active_b = df_active_b.reset_index()
-df_active_b = df_active_b.set_index('fips')
-df_active_b = df_active_b.drop({'index','county','state', 'lat', 'long', 'population'}, axis = 1)
-df_active_b = df_active_b.T
-df_active_b = df_active_b.reset_index()
-df_active_b['date'] = pd.to_datetime(df_active_b['index'], format = 'd%m%d%Y')
-df_active_b = df_active_b.drop('index', axis = 1)
-df_active_b = df_active_b.set_index('date')
-mySeries = [df_active_b[col] for col in df_active_b]
-
-
-# Scale data before PCA
-mySeries_scaled = []
-for i in range(len(mySeries)):
-  myArray = mySeries[i].to_numpy()
-  myArray=myArray.reshape(-1,1)
-
-  scaler= RobustScaler()
-  scaler.fit(myArray)
-  myArray_scaled=scaler.transform(myArray)
-  myArray_scaled = myArray_scaled.ravel()
-  mySeries_scaled.append(pd.Series(myArray_scaled))
-
-# Dimension reduction: PCA with 3 components (based on scree plot)
-pca3 = PCA(n_components=3)
-mySeries_transformed = pca3.fit_transform(mySeries_scaled)
-
 df_long = pd.melt(df_active, id_vars=['fips', 'county'], value_vars=df_active.columns[6:], var_name='date',
                   value_name='cases')
 df_long['Date'] = df_long['date'].str[5:9] + '-' + df_long['date'].str[1:3] + '-' + df_long['date'].str[3:5]
@@ -97,10 +66,10 @@ app.layout = html.Div([
             html.Div(children=[
                 html.H4("Number of clusters"),
                 dcc.Dropdown(id="n_clust",
-                    options=[{'label': x, 'value': x} for x in range(1,11)],
+                    options=[{'label': x, 'value': x} for x in range(1,21)],
                     multi=False,
                     value=3,
-                    style={'width': "90%"}
+                   style={'width': "90%"}
                     )], style=dict(width='45%', display='inline-block'))
             ], style=dict(display='flex')),
 
@@ -122,7 +91,9 @@ app.layout = html.Div([
                                    ], style=dict(display='inline-block', width="30%",verticalAlign='middle'))],
                 style=dict(display='flex'))],style=dict(width='100%', display='inline-block'))]),
             html.Div(children=[
-                html.Div(children=[dcc.Graph(id='map2', figure={})], style=dict(align='left', width='50%', display='inline-block')),
+                dcc.Loading(id="loading2",type="circle",children=[
+                html.Div(children=[dcc.Graph(id='map2', figure={})], style=dict(align='left', width='100%', display='inline-block'))
+                ], style=dict(display='inline-block', width="100%")),
                 html.Div(children=[dcc.Graph(id='ts', figure={})], style=dict(width='75%', display='inline-block', centering='right'))],
                 style=dict(display='flex'))
 ])
@@ -272,22 +243,17 @@ def update_graph(option_1, option_2, option_3):
          Input(component_id='n_clust', component_property='value'))
 def apply_clustering(option_4):
 
-# Apply Kmeans clusters to transformed data
-    cluster_count = option_4
-    kmeans = KMeans(n_clusters=cluster_count, max_iter=5000)
-    labels = kmeans.fit_predict(mySeries_transformed)
+    url4 = "https://raw.githubusercontent.com/AnjaDeric/MDA-TeamCroatia/main/Data/Counties_clustered.csv"
+    df_clusters = pd.read_csv(url4)
+    df_clusters['fips'] = df_clusters['fips'].apply('{:0>5}'.format)
+    cluster_count = "clusters_{}".format(option_4)
+    df_clusters[cluster_count] = df_clusters[cluster_count].astype(str)
+    df_clusters = df_clusters.loc[:,['fips', 'county', 'state', 'lat', 'long', 'population', cluster_count]]
 
-# Add cluster to the data frame
-    df_cluster = df_counties
-    df_cluster['fips'] = df_cluster['fips'].apply('{:0>5}'.format)
-    labels_series = pd.Series(labels)
-    df_cluster['cluster'] = (labels_series+1).astype(str)
-#  print(df_cluster['cluster'])
-    covidmap2 = px.choropleth_mapbox(df_cluster, geojson=counties, locations='fips', color='cluster', hover_name='county',
-                                 hover_data=['fips', 'population'],
-                                 # color_discrete_sequence='px.colors.qualitative.Prism',
+    covidmap2 = px.choropleth_mapbox(df_clusters, geojson=counties, locations='fips', color=cluster_count, hover_name='county',
+                                 hover_data=['fips', 'state', 'population'],
                                  mapbox_style="carto-positron", zoom=2.25, center={"lat": 37.0902, "lon": -95.7129},
-                                 opacity=0.9, labels={'cluster': 'cluster'})
+                                 opacity=0.9, labels={cluster_count: 'cluster'})
 
     covidmap2.update_layout(legend=dict(orientation="h",yanchor="bottom", xanchor="right", x=1))
 
